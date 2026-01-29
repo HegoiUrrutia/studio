@@ -1,0 +1,316 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Geek Haven platform.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "emailAddress": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The user's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The user's last name."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The user's phone number."
+        },
+        "creationDate": {
+          "type": "string",
+          "description": "The date and time the user account was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "emailAddress",
+        "firstName",
+        "lastName",
+        "phoneNumber",
+        "creationDate"
+      ]
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a product available for sale on the Geek Haven platform.",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "description": "Unique identifier for the Product entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the product."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the product image.",
+          "format": "uri"
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to Category. (Relationship: Category 1:N Product)"
+        }
+      },
+      "required": [
+        "productId",
+        "name",
+        "description",
+        "price",
+        "imageUrl",
+        "categoryId"
+      ]
+    },
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
+      "type": "object",
+      "description": "Represents a category of products.",
+      "properties": {
+        "categoryId": {
+          "type": "string",
+          "description": "Unique identifier for the Category entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the category."
+        }
+      },
+      "required": [
+        "categoryId",
+        "name"
+      ]
+    },
+    "BasketElement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "BasketElement",
+      "type": "object",
+      "description": "Represents an item in a user's shopping basket.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N BasketElement)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to Product. (Relationship: Product 1:N BasketElement)"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "The quantity of the product in the basket."
+        }
+      },
+      "required": [
+        "userId",
+        "productId",
+        "quantity"
+      ]
+    },
+    "RequestHeader": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "RequestHeader",
+      "type": "object",
+      "description": "Represents the header information for a user's order.",
+      "properties": {
+        "requestHeaderId": {
+          "type": "string",
+          "description": "Unique identifier for the RequestHeader entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N RequestHeader)"
+        },
+        "creationDate": {
+          "type": "string",
+          "description": "The date and time the order was created.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the order (e.g., pending, processing, shipped, completed)."
+        }
+      },
+      "required": [
+        "requestHeaderId",
+        "userId",
+        "creationDate",
+        "status"
+      ]
+    },
+    "RequestElement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "RequestElement",
+      "type": "object",
+      "description": "Represents a specific product included in an order.",
+      "properties": {
+        "requestHeaderId": {
+          "type": "string",
+          "description": "Reference to RequestHeader. (Relationship: RequestHeader 1:N RequestElement)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to Product. (Relationship: Product 1:N RequestElement)"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "The quantity of the product in the order."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the product at the time of the order."
+        }
+      },
+      "required": [
+        "requestHeaderId",
+        "productId",
+        "quantity",
+        "price"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Path-based ownership ensures only the authenticated user can access their own profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores product information.  This is a public collection accessible to all users for read operations.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier of the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Stores category information.  This is a public collection accessible to all users for read operations.",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "The unique identifier of the category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/basketElements/{basketElementId}",
+        "definition": {
+          "entityName": "BasketElement",
+          "schema": {
+            "$ref": "#/backend/entities/BasketElement"
+          },
+          "description": "Stores items in the user's shopping basket. Path-based ownership ensures only the authenticated user can access their own basket.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "basketElementId",
+              "description": "The unique identifier of the basket element."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/requestHeaders/{requestHeaderId}",
+        "definition": {
+          "entityName": "RequestHeader",
+          "schema": {
+            "$ref": "#/backend/entities/RequestHeader"
+          },
+          "description": "Stores the header information for a user's order. Path-based ownership ensures only the authenticated user can access their own order headers.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "requestHeaderId",
+              "description": "The unique identifier of the request header."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/requestHeaders/{requestHeaderId}/requestElements/{requestElementId}",
+        "definition": {
+          "entityName": "RequestElement",
+          "schema": {
+            "$ref": "#/backend/entities/RequestElement"
+          },
+          "description": "Stores a specific product included in an order. Path-based ownership ensures only the authenticated user can access their own order details.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "requestHeaderId",
+              "description": "The unique identifier of the request header."
+            },
+            {
+              "name": "requestElementId",
+              "description": "The unique identifier of the request element."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support Geek Haven's e-commerce functionalities, focusing on product catalog, user management, shopping cart, and order processing. It prioritizes authorization independence by avoiding hierarchical `get()` calls in security rules. All collections are structurally segregated based on their security posture.\n\n*   **User Data:** User data is stored under `/users/{userId}` to ensure path-based ownership, simplifying security rules for private user data.\n*   **Product Catalog:** Product and Category information are stored in flat collections (`/products`, `/categories`) to allow efficient querying and filtering without complex security constraints.\n*   **Shopping Cart:** Basket elements are stored within the user document under `/users/{userId}/basketElements`. This structure creates a 1:N relationship between users and basket elements, thus simplifying ownership-based security rules.\n*   **Order Processing:** Order headers (`RequestHeader`) are stored under `/users/{userId}/requestHeaders`, and order elements (`RequestElement`) are stored as a subcollection `/users/{userId}/requestHeaders/{requestHeaderId}/requestElements`. This nested structure maintains the relationship between users, orders, and order details. The RequestHeader collection includes a status field to track order status.\n\nThis structure achieves Authorization Independence by avoiding the need to fetch parent documents to authorize access to child documents. For example, a rule for `/users/{userId}/requestHeaders/{requestHeaderId}/requestElements` only needs to verify that the `userId` matches `request.auth.uid` and that the `requestHeaderId` corresponds to a valid header owned by the user, without needing to `get()` the user document or the request header document.\n\nThe structure supports the required QAPs. Since product and category data are in public collections with no complex rules, listing and filtering products is straightforward.  Access to user-specific data, such as basket elements and orders, is secured using path-based rules."
+  }
+}

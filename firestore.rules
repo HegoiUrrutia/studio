@@ -1,0 +1,181 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model for all user-specific data, such as profiles, shopping baskets, and order histories.
+ * Any data created by a user is only accessible to that user. A clear separation is maintained between private user data and the public product catalog.
+ *
+ * Data Structure: User-specific data is nested hierarchically under the `/users/{userId}` path. This includes the user's profile document, their `/basketElements` subcollection,
+ * and their `/requestHeaders` (orders), which in turn contain `/requestElements` (order items). This path-based ownership simplifies authorization checks significantly.
+ * The product catalog, consisting of `/products` and `/categories`, is stored in top-level collections, reflecting their public, read-only nature for clients.
+ *
+ * Key Security Decisions:
+ * - User Enumeration is Disabled: A global `list` operation on the `/users` collection is explicitly forbidden to protect user privacy.
+ * - Public Data is Read-Only: The `/products` and `/categories` collections are readable by anyone, including unauthenticated users, to allow browsing the catalog.
+ *   However, all client-side write operations are disabled. Content management must be performed by a trusted backend service or admin SDK.
+ * - Strict Ownership: All documents and subcollections under `/users/{userId}` can only be accessed by the authenticated user whose UID matches `{userId}`.
+ *
+ * Denormalization for Authorization: The structure leverages path-based authorization. By placing a user's data under `/users/{userId}`, we use the wildcard
+ * `userId` directly in rules, avoiding costly `get()` calls to other documents to verify ownership. Additionally, we enforce that documents created within this
+ * structure contain a `userId` field that matches the path, ensuring relational integrity without compromising performance.
+ *
+ * Structural Segregation: The ruleset clearly segregates private and public data. Private data (baskets, orders) is kept in user-specific subcollections,
+ * while public data (products, categories) exists in separate top-level collections. This prevents accidental data leakage and simplifies queries for public content.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------------------------------------
+    // Helper Functions
+    // ------------------------------------------------------------------------
+
+    /**
+     * Checks if the user is signed in.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the foundation of the user-ownership security model.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Combines an ownership check with a check that the resource already exists.
+     * CRITICAL for all secure update and delete operations.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Ensures that on document creation, the internal 'userId' field matches the
+     * document's path, enforcing relational integrity.
+     */
+    function hasCorrectUserIdOnCreate(userId) {
+      return request.resource.data.userId == userId;
+    }
+
+    /**
+     * Ensures that the 'userId' field is immutable and cannot be changed after creation.
+     */
+    function isUserIdImmutable() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    /**
+     * Ensures that on document creation, the internal 'requestHeaderId' field matches the
+     * document's path, linking an order item to its parent order.
+     */
+    function hasCorrectRequestHeaderIdOnCreate(requestHeaderId) {
+      return request.resource.data.requestHeaderId == requestHeaderId;
+    }
+
+    /**
+     * Ensures that the 'requestHeaderId' field is immutable after creation.
+     */
+    function isRequestHeaderIdImmutable() {
+      return request.resource.data.requestHeaderId == resource.data.requestHeaderId;
+    }
+
+    // ------------------------------------------------------------------------
+    // Public Collections (Product Catalog)
+    // ------------------------------------------------------------------------
+
+    /**
+     * @description Controls access to the public product catalog.
+     * @path /products/{productId}
+     * @allow (get) Any user, signed in or not, can view a product.
+     * @deny (create) A client attempts to add a new product. This must be done via a secure backend.
+     * @principle Public data is readable by all, but writable only by trusted sources (not clients).
+     */
+    match /products/{productId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Controls access to the public product categories.
+     * @path /categories/{categoryId}
+     * @allow (get) Any user, signed in or not, can view a category.
+     * @deny (create) A client attempts to add a new category. This must be done via a secure backend.
+     * @principle Public data is readable by all, but writable only by trusted sources (not clients).
+     */
+    match /categories/{categoryId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ------------------------------------------------------------------------
+    // User-Owned Data
+    // ------------------------------------------------------------------------
+
+    match /users/{userId} {
+      /**
+       * @description Controls access to a user's own profile document.
+       * @path /users/{userId}
+       * @allow (create) A new user with uid 'user123' creates their own profile document at `/users/user123`.
+       * @deny (get) A user with uid 'user456' tries to read the profile at `/users/user123`.
+       * @principle Restricts access to a user's own data tree and prevents user enumeration.
+       */
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && hasCorrectUserIdOnCreate(userId);
+      allow update: if isExistingOwner(userId) && isUserIdImmutable();
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Controls access to items in a user's shopping basket.
+       * @path /users/{userId}/basketElements/{basketElementId}
+       * @allow (create) User 'user123' adds a product to their own basket at `/users/user123/basketElements/itemABC`.
+       * @deny (list) User 'user456' tries to list items in the basket at `/users/user123/basketElements`.
+       * @principle Enforces document ownership within a user-specific subcollection.
+       */
+      match /basketElements/{basketElementId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && hasCorrectUserIdOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isUserIdImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Controls access to a user's order headers.
+       * @path /users/{userId}/requestHeaders/{requestHeaderId}
+       * @allow (get) User 'user123' retrieves their own order history.
+       * @deny (update) User 'user456' tries to change the status of an order belonging to 'user123'.
+       * @principle Enforces document ownership within a user-specific subcollection.
+       */
+      match /requestHeaders/{requestHeaderId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && hasCorrectUserIdOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isUserIdImmutable();
+        allow delete: if isExistingOwner(userId);
+
+        /**
+         * @description Controls access to the specific items within a user's order.
+         * @path /users/{userId}/requestHeaders/{requestHeaderId}/requestElements/{requestElementId}
+         * @allow (get) User 'user123' retrieves the items for their own order.
+         * @deny (create) User 'user456' tries to add an item to an order belonging to 'user123'.
+         * @principle Ownership is inherited from the top-level path, securing nested data.
+         */
+        match /requestElements/{requestElementId} {
+          allow get: if isOwner(userId);
+          allow list: if isOwner(userId);
+          allow create: if isOwner(userId) && hasCorrectRequestHeaderIdOnCreate(requestHeaderId);
+          allow update: if isExistingOwner(userId) && isRequestHeaderIdImmutable();
+          allow delete: if isExistingOwner(userId);
+        }
+      }
+    }
+  }
+}

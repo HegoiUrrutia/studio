@@ -60,7 +60,7 @@ export default function CheckoutPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="address">{t('address')}</Label>
-                <Input id="address" placeholder="123 Gaming Lane" />
+                <Input id="address" placeholder="192 Anoeta plaza" />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
