@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/contexts/cart-context';
 import { LocalizationProvider } from '@/contexts/localization-context';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'Geek Haven',
@@ -26,12 +27,14 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <LocalizationProvider>
           <CartProvider>
-            <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
-            <Toaster />
+            <FirebaseClientProvider>
+              <div className="flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+              <Toaster />
+            </FirebaseClientProvider>
           </CartProvider>
         </LocalizationProvider>
       </body>
