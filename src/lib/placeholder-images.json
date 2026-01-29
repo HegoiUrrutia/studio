@@ -1,3 +1,58 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "cyberpunk-2077",
+      "description": "Cyberpunk 2077 game cover art.",
+      "imageUrl": "https://images.unsplash.com/photo-1592265911347-2d381a17e161?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnYW1lJTIwY292ZXJ8ZW58MHx8fHwxNzY5NzEwMzA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "game cover"
+    },
+    {
+      "id": "playstation-5",
+      "description": "Sony PlayStation 5 console.",
+      "imageUrl": "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxnYW1pbmclMjBjb25zb2xlfGVufDB8fHx8MTc2OTY4NDE3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gaming console"
+    },
+    {
+      "id": "animal-crossing-plush",
+      "description": "Tom Nook plush from Animal Crossing.",
+      "imageUrl": "https://images.unsplash.com/photo-1669212409006-4684413000aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwbHVzaCUyMHRveXxlbnwwfHx8fDE3Njk2NTg5MTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "plush toy"
+    },
+    {
+      "id": "zelda-tears-of-the-kingdom",
+      "description": "The Legend of Zelda: Tears of the Kingdom game cover.",
+      "imageUrl": "https://images.unsplash.com/photo-1575191831984-68975931b6d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxnYW1lJTIwY292ZXJ8ZW58MHx8fHwxNzY5NzEwMzA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "game cover"
+    },
+    {
+      "id": "nintendo-switch-oled",
+      "description": "Nintendo Switch OLED model.",
+      "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxnYW1pbmclMjBjb25zb2xlfGVufDB8fHx8MTc2OTY4NDE3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gaming console"
+    },
+    {
+      "id": "mario-kart-tshirt",
+      "description": "A t-shirt with a Mario Kart design.",
+      "imageUrl": "https://images.unsplash.com/photo-1621446511304-2ebda9cf70f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxncmFwaGljJTIwdGVlfGVufDB8fHx8MTc2OTYyODY2NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "graphic tee"
+    },
+    {
+      "id": "elden-ring",
+      "description": "Elden Ring game cover art.",
+      "imageUrl": "https://images.unsplash.com/photo-1643585148061-67ed5aa78797?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnYW1lJTIwY292ZXJ8ZW58MHx8fHwxNzY5NzEwMzA5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "game cover"
+    },
+    {
+      "id": "xbox-series-x",
+      "description": "Microsoft Xbox Series X console.",
+      "imageUrl": "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxnYW1pbmclMjBjb25zb2xlfGVufDB8fHx8MTc2OTY4NDE3Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gaming console"
+    },
+    {
+      "id": "pokemon-hat",
+      "description": "A baseball cap with a Poke Ball logo.",
+      "imageUrl": "https://images.unsplash.com/photo-1622445275576-721325763afe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxiYXNlYmFsbCUyMGNhcHxlbnwwfHx8fDE3Njk3MDQwMjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "baseball cap"
+    }
+  ]
 }

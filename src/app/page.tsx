@@ -8,6 +8,7 @@ import { useCollection, useFirestore, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Seeder } from "@/components/dev/Seeder";
 
 
 export default function Home() {
@@ -99,8 +100,10 @@ export default function Home() {
                   </Card>
                 ))}
              </div>
-          ) : (
+          ) : products && products.length > 0 ? (
             <ProductGrid products={filteredProducts} />
+          ) : (
+            <Seeder />
           )}
         </div>
       </div>
