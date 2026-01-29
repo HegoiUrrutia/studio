@@ -6,6 +6,8 @@ import type { Product } from "@/lib/types";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import { useLocalization } from "@/contexts/localization-context";
+import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 type AddToCartButtonProps = {
   product: Product;
@@ -15,6 +17,8 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
   const { addItem } = useCart();
   const { toast } = useToast();
   const { t } = useLocalization();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const handleAddToCart = () => {
     addItem(product);
@@ -22,12 +26,21 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
       title: t('item_added_to_cart'),
       description: `${product.name} ${t('has_been_added')}`,
     });
+
+    if (user) {
+      const cartRef = collection(firestore, `users/${user.uid}/basketElements`);
+      addDocumentNonBlocking(cartRef, {
+        productId: product.id,
+        quantity: 1,
+        userId: user.uid,
+      });
+    }
   };
 
   return (
-    <Button onClick={handleAddToCart} className="w-full">
+    <Button onClick={handleAddToCart} className="w-full" disabled={!user}>
       <ShoppingCart className="mr-2 h-4 w-4" />
-      {t('add_to_cart')}
+      {user ? t('add_to_cart') : "Login to Add"}
     </Button>
   );
 }

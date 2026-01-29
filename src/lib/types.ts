@@ -3,11 +3,14 @@ export type Product = {
   name: string;
   description: string;
   price: number;
-  category: 'Games' | 'Consoles' | 'Merchandise';
-  platform?: 'PlayStation' | 'Xbox' | 'Nintendo' | 'PC';
-  imageId: string;
-  rating: number;
+  imageUrl: string;
+  categoryId: string;
 };
+
+export type Category = {
+  id: string;
+  name: string;
+}
 
 export type CartItem = {
   product: Product;

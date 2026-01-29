@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { useCart } from "@/contexts/cart-context";
 import { useLocalization } from "@/contexts/localization-context";
 import Image from "next/image";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -27,10 +26,6 @@ export default function CheckoutPage() {
       </div>
     );
   }
-
-  const getImage = (imageId: string) => {
-    return PlaceHolderImages.find((img) => img.id === imageId);
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -109,17 +104,15 @@ export default function CheckoutPage() {
             <CardContent>
               <div className="space-y-4">
                 {items.map(({ product, quantity }) => {
-                  const image = getImage(product.imageId);
                   return (
                     <div key={product.id} className="flex items-center gap-4">
-                       {image && (
+                       {product.imageUrl && (
                          <Image
-                          src={image.imageUrl}
+                          src={product.imageUrl}
                           alt={product.name}
                           width={64}
                           height={64}
                           className="rounded-md object-cover"
-                          data-ai-hint={image.imageHint}
                         />
                        )}
                       <div className="flex-1">

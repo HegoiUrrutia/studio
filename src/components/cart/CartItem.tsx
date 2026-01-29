@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/contexts/cart-context";
 import type { CartItem as CartItemType } from "@/lib/types";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Minus, Plus, X } from "lucide-react";
 
 type CartItemProps = {
@@ -14,18 +13,16 @@ type CartItemProps = {
 
 export function CartItem({ item }: CartItemProps) {
   const { updateItemQuantity, removeItem } = useCart();
-  const image = PlaceHolderImages.find(img => img.id === item.product.imageId);
 
   return (
     <div className="flex items-start gap-4 py-4">
-      {image && (
+      {item.product.imageUrl && (
         <Image
-          src={image.imageUrl}
+          src={item.product.imageUrl}
           alt={item.product.name}
           width={80}
           height={80}
           className="rounded-lg object-cover"
-          data-ai-hint={image.imageHint}
         />
       )}
       <div className="flex-1">
