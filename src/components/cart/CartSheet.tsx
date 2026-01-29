@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -11,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Loader2 } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import { CartItem } from "./CartItem";
 import { Separator } from "@/components/ui/separator";
@@ -21,7 +22,7 @@ import { RecommendedProducts } from "./RecommendedProducts";
 import { useLocalization } from "@/contexts/localization-context";
 
 export function CartSheet() {
-  const { items, getTotalItems, getTotalPrice } = useCart();
+  const { items, getTotalItems, getTotalPrice, isLoading } = useCart();
   const { t } = useLocalization();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
@@ -46,7 +47,11 @@ export function CartSheet() {
         <SheetHeader>
           <SheetTitle>{t('your_cart')}</SheetTitle>
         </SheetHeader>
-        {items.length > 0 ? (
+        {isLoading ? (
+             <div className="flex flex-1 items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+             </div>
+        ) : items.length > 0 ? (
           <>
             <ScrollArea className="flex-1">
               <div className="pr-6">

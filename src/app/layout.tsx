@@ -26,16 +26,16 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <LocalizationProvider>
-          <CartProvider>
-            <FirebaseClientProvider>
+          <FirebaseClientProvider>
+            <CartProvider>
               <div className="flex min-h-screen flex-col">
                 <Header />
                 <main className="flex-1">{children}</main>
                 <Footer />
               </div>
               <Toaster />
-            </FirebaseClientProvider>
-          </CartProvider>
+            </CartProvider>
+          </FirebaseClientProvider>
         </LocalizationProvider>
       </body>
     </html>
