@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ export default function CheckoutPage() {
     const requestHeadersRef = collection(firestore, `users/${user.uid}/requestHeaders`);
     const newHeaderRef = doc(requestHeadersRef); // Auto-generates ID
     batch.set(newHeaderRef, {
+      requestHeaderId: newHeaderRef.id,
       userId: user.uid,
       creationDate: new Date().toISOString(),
       status: 'pending',
