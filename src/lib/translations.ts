@@ -64,6 +64,33 @@ export const translations: Record<Language, Record<string, string>> = {
     free: "Free",
     total: "Total",
     place_order: "Place Order",
+    order_placed: "Order Placed!",
+    order_placed_desc: "Your order has been successfully placed.",
+    view_orders: "View Orders",
+
+    // Order History
+    order_history: "Order History",
+    order_history_desc: "Check the status of recent orders.",
+    no_orders_found: "No Orders Found",
+    no_orders_found_desc: "You haven't placed any orders yet.",
+    order_id: "Order ID",
+    order_date: "Date",
+    order_status: "Status",
+    order_total: "Total",
+    order_details: "Order Details",
+    pending: "Pending",
+    processing: "Processing",
+    shipped: "Shipped",
+    completed: "Completed",
+
+    // Password Reset
+    forgot_password: "Forgot your password?",
+    forgot_password_title: "Forgot Password",
+    forgot_password_desc: "Enter your email and we'll send you a link to reset your password.",
+    send_reset_email: "Send Reset Email",
+    reset_email_sent_title: "Reset Email Sent",
+    reset_email_sent_desc: "Check your inbox for a password reset link.",
+    back_to_login: "Back to Login",
 
     // Footer
     all_rights_reserved: "All rights reserved.",
@@ -130,7 +157,34 @@ export const translations: Record<Language, Record<string, string>> = {
     free: "Doan",
     total: "Guztira",
     place_order: "Eskaera Egin",
+    order_placed: "Eskaera Eginda!",
+    order_placed_desc: "Zure eskaera ondo egin da.",
+    view_orders: "Eskaerak Ikusi",
     
+    // Order History
+    order_history: "Eskaeren historiala",
+    order_history_desc: "Egiaztatu azken eskaeren egoera.",
+    no_orders_found: "Ez da Eskaerarik Aurkitu",
+    no_orders_found_desc: "Oraindik ez duzu eskaerarik egin.",
+    order_id: "Eskaera ID",
+    order_date: "Data",
+    order_status: "Egoera",
+    order_total: "Guztira",
+    order_details: "Eskaeraren Xehetasunak",
+    pending: "Zain",
+    processing: "Prozesatzen",
+    shipped: "Bidalia",
+    completed: "Osatuta",
+
+    // Password Reset
+    forgot_password: "Pasahitza ahaztu duzu?",
+    forgot_password_title: "Pasahitza Ahaztuta",
+    forgot_password_desc: "Sartu zure helbide elektronikoa eta pasahitza berrezartzeko esteka bat bidaliko dizugu.",
+    send_reset_email: "Berrezartzeko Emaila Bidali",
+    reset_email_sent_title: "Berrezartzeko Emaila Bidali da",
+    reset_email_sent_desc: "Egiaztatu sarrera-ontzia pasahitza berrezartzeko esteka aurkitzeko.",
+    back_to_login: "Saioa Hastera Itzuli",
+
     // Footer
     all_rights_reserved: "Eskubide guztiak erreserbatuta.",
   },

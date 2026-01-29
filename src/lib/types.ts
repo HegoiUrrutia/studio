@@ -16,3 +16,18 @@ export type CartItem = {
   product: Product;
   quantity: number;
 };
+
+export type RequestHeader = {
+  id: string;
+  userId: string;
+  creationDate: string;
+  status: string;
+};
+
+export type RequestElement = {
+  id: string;
+  requestHeaderId: string;
+  productId: string;
+  quantity: number;
+  price: number;
+};

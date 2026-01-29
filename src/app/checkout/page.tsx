@@ -9,13 +9,75 @@ import { useLocalization } from "@/contexts/localization-context";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useFirestore, useUser } from "@/firebase";
+import { collection, writeBatch, doc, getDocs } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function CheckoutPage() {
   const { items, getTotalPrice } = useCart();
   const { t } = useLocalization();
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
-  if (items.length === 0) {
+  async function handlePlaceOrder() {
+    if (!user || items.length === 0) return;
+
+    setIsPlacingOrder(true);
+    const batch = writeBatch(firestore);
+
+    // 1. Create RequestHeader
+    const requestHeadersRef = collection(firestore, `users/${user.uid}/requestHeaders`);
+    const newHeaderRef = doc(requestHeadersRef); // Auto-generates ID
+    batch.set(newHeaderRef, {
+      userId: user.uid,
+      creationDate: new Date().toISOString(),
+      status: 'pending',
+    });
+
+    // 2. Create RequestElements
+    for (const { product, quantity } of items) {
+      const requestElementRef = doc(collection(newHeaderRef, 'requestElements'));
+      batch.set(requestElementRef, {
+        requestHeaderId: newHeaderRef.id,
+        productId: product.id,
+        quantity: quantity,
+        price: product.price,
+      });
+    }
+
+    // 3. Clear Basket (using the same batch for atomicity)
+    const basketCollectionRef = collection(firestore, `users/${user.uid}/basketElements`);
+    const basketSnapshot = await getDocs(basketCollectionRef);
+    basketSnapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    try {
+      await batch.commit();
+      toast({
+        title: t('order_placed'),
+        description: t('order_placed_desc'),
+      });
+      router.push('/orders');
+    } catch (error: any) {
+      console.error("Order placement failed: ", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: error.message || "Could not place order.",
+      });
+      setIsPlacingOrder(false);
+    }
+  }
+
+
+  if (items.length === 0 && !isPlacingOrder) {
     return (
       <div className="container mx-auto flex flex-col items-center justify-center gap-4 px-4 py-16 text-center">
         <h1 className="text-3xl font-bold">{t('checkout_empty_title')}</h1>
@@ -138,7 +200,10 @@ export default function CheckoutPage() {
                   <p>${getTotalPrice().toFixed(2)}</p>
                 </div>
               </div>
-              <Button className="mt-6 w-full">{t('place_order')}</Button>
+              <Button onClick={handlePlaceOrder} disabled={isPlacingOrder || items.length === 0} className="mt-6 w-full">
+                 {isPlacingOrder && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                 {isPlacingOrder ? 'Placing Order...' : t('place_order')}
+              </Button>
             </CardContent>
           </Card>
         </div>

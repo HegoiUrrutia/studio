@@ -29,6 +29,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAuth, useUser } from "@/firebase";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLocalization } from "@/contexts/localization-context";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -40,6 +41,7 @@ export default function LoginPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
+  const { t } = useLocalization();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -119,10 +121,10 @@ export default function LoginPage() {
                     <div className="flex items-center">
                       <FormLabel>Password</FormLabel>
                       <Link
-                        href="#"
+                        href="/forgot-password"
                         className="ml-auto inline-block text-sm underline"
                       >
-                        Forgot your password?
+                        {t('forgot_password')}
                       </Link>
                     </div>
                     <FormControl>

@@ -71,9 +71,11 @@ export function UserNav() {
             <UserIcon className="mr-2 h-4 w-4" />
             <span>{t("profile")}</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard className="mr-2 h-4 w-4" />
-            <span>{t("orders")}</span>
+          <DropdownMenuItem asChild>
+            <Link href="/orders">
+              <CreditCard className="mr-2 h-4 w-4" />
+              <span>{t("orders")}</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
