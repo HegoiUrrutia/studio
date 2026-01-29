@@ -8,8 +8,8 @@
  *
  * Key Security Decisions:
  * - User Enumeration is Disabled: A global `list` operation on the `/users` collection is explicitly forbidden to protect user privacy.
- * - Public Data is Read-Only: The `/products` and `/categories` collections are readable by anyone, including unauthenticated users, to allow browsing the catalog.
- *   However, all client-side write operations are disabled. Content management must be performed by a trusted backend service or admin SDK.
+ * - Public Data is Read-Only for clients, but Writable for Seeding: The `/products` and `/categories` collections are readable by anyone.
+ *   Write operations are restricted to authenticated users, primarily for the initial database seeding feature.
  * - Strict Ownership: All documents and subcollections under `/users/{userId}` can only be accessed by the authenticated user whose UID matches `{userId}`.
  *
  * Denormalization for Authorization: The structure leverages path-based authorization. By placing a user's data under `/users/{userId}`, we use the wildcard
@@ -88,13 +88,13 @@ service cloud.firestore {
      * @description Controls access to the public product catalog.
      * @path /products/{productId}
      * @allow (get) Any user, signed in or not, can view a product.
-     * @deny (create) A client attempts to add a new product. This must be done via a secure backend.
-     * @principle Public data is readable by all, but writable only by trusted sources (not clients).
+     * @allow (create) An authenticated user can add a new product (for seeding).
+     * @principle Public data is readable by all, but writable only by trusted sources (here, any signed-in user for seeding).
      */
     match /products/{productId} {
       allow get: if true;
       allow list: if true;
-      allow create: if false;
+      allow create: if isSignedIn();
       allow update: if false;
       allow delete: if false;
     }
@@ -103,13 +103,13 @@ service cloud.firestore {
      * @description Controls access to the public product categories.
      * @path /categories/{categoryId}
      * @allow (get) Any user, signed in or not, can view a category.
-     * @deny (create) A client attempts to add a new category. This must be done via a secure backend.
-     * @principle Public data is readable by all, but writable only by trusted sources (not clients).
+     * @allow (create) An authenticated user can add a new category (for seeding).
+     * @principle Public data is readable by all, but writable only by trusted sources (here, any signed-in user for seeding).
      */
     match /categories/{categoryId} {
       allow get: if true;
       allow list: if true;
-      allow create: if false;
+      allow create: if isSignedIn();
       allow update: if false;
       allow delete: if false;
     }

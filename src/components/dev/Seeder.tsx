@@ -1,5 +1,5 @@
 'use client';
-import { useFirestore, setDocumentNonBlocking } from '@/firebase';
+import { useFirestore, setDocumentNonBlocking, useUser } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { products, categories } from '@/lib/seed-data';
@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 export function Seeder() {
     const firestore = useFirestore();
     const { toast } = useToast();
+    const { user, isUserLoading } = useUser();
 
     const seedDatabase = async () => {
         try {
@@ -36,7 +37,9 @@ export function Seeder() {
         <div className="flex h-64 flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 bg-muted/20 text-center">
             <h3 className="text-xl font-semibold tracking-tight">Your product catalog is empty</h3>
             <p className="text-muted-foreground">Add some sample products to get started.</p>
-            <Button onClick={seedDatabase} className="mt-4">Seed Sample Products</Button>
+            <Button onClick={seedDatabase} className="mt-4" disabled={!user || isUserLoading}>
+                 {isUserLoading ? "Loading..." : user ? "Seed Sample Products" : "Login to Seed Products"}
+            </Button>
         </div>
     );
 }
