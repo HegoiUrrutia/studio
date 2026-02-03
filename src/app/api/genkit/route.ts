@@ -1,4 +1,9 @@
-import { ai } from '@/ai/genkit'; // Fíjate que aquí usamos 'ai', que es lo que exportaste
-import { nextJSHandler } from '@genkit-ai/next';
+import { genkit } from '@/ai/genkit'; // tu instancia de Genkit
 
-export const POST = nextJSHandler(ai);
+export const runtime = 'nodejs';
+
+export async function POST(request: Request) {
+  // Llama a tu instancia de Genkit directamente
+  const response = await genkit.handleRequest(request);
+  return response;
+}
