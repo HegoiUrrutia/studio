@@ -1,7 +1,4 @@
-import { genkit } from '@/ai/genkit';
+import { ai } from '@/ai/genkit'; // Fíjate que aquí usamos 'ai', que es lo que exportaste
 import { nextJSHandler } from '@genkit-ai/next';
 
-// Forzar el uso de Node.js en lugar de Edge
-export const runtime = 'nodejs';
-
-export const POST = nextJSHandler(genkit);
+export const POST = nextJSHandler(ai);
